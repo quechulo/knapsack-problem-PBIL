@@ -4,7 +4,8 @@ from generateItemsCorelation import generateItems
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-import time
+import pandas as pd
+import xlsxwriter
 
 global N
 N= 32
@@ -81,7 +82,8 @@ def findOpt(population, numOfGen, tournamentSize, p_bar, p_gen_type):
         # bestForPlotting.append(best[0])
         if best[0] > theBest[0]:
             theBest = best.copy()
-            bestForPlotting.append(theBest[0])
+        bestForPlotting.append(theBest[0])
+
             # print(theBest)
         # print(best)
     return theBest
@@ -93,27 +95,37 @@ if __name__ == "__main__":
     items = generateItems(N, True)
     print(items)
 
-    population_reps = 250
-    numOfGen = 25000
-    tournamentSize = 3  # for tournament select
-    p_bar = 0.7  # p-nstwo braku zdarzenia mutacji
-    p_gen_type = 0.95  # p-nstwo mniej zroznicowanego genotypu
+    bests = [[] for x in range(10)]
+    generations = [100, 1000, 10000]
+    for gen in generations:
+        for i in range(10):
+            population_reps = 150
+            numOfGen = gen
+            tournamentSize = 3  # for tournament select
+            p_bar = 0.7  # p-nstwo braku zdarzenia mutacji
+            p_gen_type = 0.9  # p-nstwo mniej zroznicowanego genotypu
 
-    print(W_max)
-    population = generatePopulation(items, population_reps, W_max)
-    # population = adjustValues(population)
-    print('first population:')
-    print(population)
+            # print(W_max)
+            population = generatePopulation(items, population_reps, W_max)
+            # population = adjustValues(population)
+            # print('first population:')
+            # print(population)
 
-    best = []
-    best = findOpt(population, numOfGen, tournamentSize, p_bar, p_gen_type)
+            best = []
+            best = findOpt(population, numOfGen, tournamentSize, p_bar, p_gen_type)[0]
 
-    print("best value:", best[0])
-    for i in range(0, len(items)):
-        if best[1][i] == 1:
-            print(items[i])
-    print("best knapsack:", best[1])
+            # print("best value:", best[0])
+            # for i in range(0, len(items)):
+            #     if best[1][i] == 1:
+            #         print(items[i])
+            # print("best knapsack:", best[1])
+            bests[i].append(best)
 
 
-    plt.plot(bestForPlotting, 'o', color='green')
-    plt.show()
+            plt.plot(bestForPlotting, 'o', color='red')
+            plt.title('Correlated; number of generations: ' + str(gen))
+            plt.show()
+            bestForPlotting = []
+    df = pd.DataFrame(bests)
+    df.to_excel('binMut.xlsx')
+
