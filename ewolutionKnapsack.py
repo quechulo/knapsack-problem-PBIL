@@ -1,3 +1,5 @@
+import numpy.random
+
 from generateData import *
 from generateItemsCorelation import generateItems
 
@@ -7,11 +9,11 @@ from tqdm import tqdm
 import pandas as pd
 import xlsxwriter
 
+numpy.random.seed(10)
 global N
 N= 32
-W_max = 5.5
+W_max = 60
 bestForPlotting = []
-
 
 def adjustValues(population):
     for el in population:
@@ -99,7 +101,7 @@ if __name__ == "__main__":
     generations = [100, 1000, 10000]
     for gen in generations:
         for i in range(10):
-            population_reps = 150
+            population_reps = 32
             numOfGen = gen
             tournamentSize = 3  # for tournament select
             p_bar = 0.7  # p-nstwo braku zdarzenia mutacji
@@ -112,7 +114,7 @@ if __name__ == "__main__":
             # print(population)
 
             best = []
-            best = findOpt(population, numOfGen, tournamentSize, p_bar, p_gen_type)[0]
+            best = findOpt(population, numOfGen, tournamentSize, p_bar, p_gen_type)
 
             # print("best value:", best[0])
             # for i in range(0, len(items)):
@@ -123,7 +125,9 @@ if __name__ == "__main__":
 
 
             plt.plot(bestForPlotting, 'o', color='red')
-            plt.title('Correlated; number of generations: ' + str(gen))
+            plt.xlabel('number of generations')
+            plt.ylabel('max value found')
+            plt.title('Correlated items')
             plt.show()
             bestForPlotting = []
     df = pd.DataFrame(bests)

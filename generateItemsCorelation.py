@@ -6,15 +6,15 @@ import random
 import numpy as np
 from matplotlib.pyplot import scatter
 
-# random.seed(0)
+np.random.seed(10)
 
 def generateItems(num_of_items=5, cor=False):
     if cor is False:
         corr = 0.01  # correlation
     else:
         corr = 0.9  # correlation
-    xx = np.array([1.0, 50.0])
-    yy = np.array([0.1, 1.0])
+    xx = np.array([1, 50])
+    yy = np.array([2, 10])
     means = [xx.mean(), yy.mean()]
     stds = [xx.std() / 3, yy.std() / 3] # tutaj można podzielić obie przez 3 `/ 3` wtedy nie ma ujemnych
 
@@ -28,7 +28,7 @@ def generateItems(num_of_items=5, cor=False):
     df = pd.DataFrame(m)
     df = df.T[[1,0]] # swap order of columns to [weight; value]
     df[0] = df[0].astype('int')
-    df[1] = df[1].round(2)
+    df[1] = df[1].astype('int')
     df = df.values.tolist()
     return df
 

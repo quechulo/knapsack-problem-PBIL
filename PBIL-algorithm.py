@@ -1,5 +1,5 @@
-from regex import E
-from torch import absolute
+import matplotlib.pyplot as plt
+
 from generateData import *
 from generateItemsCorelation import generateItems
 from random import uniform, seed
@@ -46,6 +46,7 @@ def mutate_population(mutation_probability, mutation_sigma, population_size, pro
 def find_optimal(numOfGen, number_of_solutions_to_select, items, population_size, max_weight, a_parameter, probability_vector):
     absolute_best = 0
     best_population = np.zeros(population_size)
+    bestForPlotting = []
     for _ in tqdm(range(numOfGen), desc="Evolution in progress..."):
         population = generate_population_based_on_probability(probability_vector, population_size)
         best_N_solutions = select_function(population, number_of_solutions_to_select, items, population_size, max_weight)
@@ -57,24 +58,36 @@ def find_optimal(numOfGen, number_of_solutions_to_select, items, population_size
         if(current_best_value > absolute_best):
             absolute_best = current_best_value
             best_population = population[current_best_index]
+        bestForPlotting.append(absolute_best)
             
-    return best_population, absolute_best
+    return best_population, absolute_best, bestForPlotting
 
 if __name__ == "__main__":
-    N = 15
+    N = 32
     seed(10)
     np.random.seed(10)
     # items = generateItems(N, False)
     items = generateItems(N, True)
+    print(items)
     population_size = N
     W_max = 60
     a_parameter = 0.2
     mutation_parameter = 0.05
     mutation_deviation = 0.15
     number_of_solutions_to_select = 2
-    numOfGen = 10000
+    numOfGen = 100
 
     init_probability = np.full(N, 0.5)
-    
-    best_population_found_by_pbil, best_solution_found_by_pbil = find_optimal(numOfGen, number_of_solutions_to_select, items, population_size, W_max, a_parameter, init_probability)
-    print(best_population_found_by_pbil, best_solution_found_by_pbil)
+    bests = [[] for x in range(10)]
+    generations = [100, 1000, 10000]
+    for gen in generations:
+        for i in range(10):
+            best_population_found_by_pbil, best_solution_found_by_pbil, bestForPlotting = find_optimal(gen, number_of_solutions_to_select, items, population_size, W_max, a_parameter, init_probability)
+            bests[i].append([best_solution_found_by_pbil])
+            plt.plot(bestForPlotting, 'o', color='red')
+            plt.xlabel('number of generations')
+            plt.ylabel('max value found')
+            plt.title('Correlated items')
+            plt.show()
+    df = pd.DataFrame(bests)
+    df.to_excel('PBIL.xlsx')
