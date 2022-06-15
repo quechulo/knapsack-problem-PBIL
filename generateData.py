@@ -4,18 +4,18 @@ INDEX = 305858
 np.random.seed(INDEX)  # lowest index
 
 
-def generateItems(N):
-    items = []
-    pop_weights = np.random.uniform(0.1, 1, (N, 1))
-    pop_p = np.random.uniform(1, 100, (N, 1))
-
-    for i in range(0, N):
-        pop_weights[i][0] = np.round(pop_weights[i][0], 1)
-        pop_p[i][0] = np.round(pop_p[i][0])
-        item = [pop_weights[i][0], pop_p[i][0]]
-        items.append(item)
-    # print(items)
-    return items
+# def generateItems(N):
+#     items = []
+#     pop_weights = np.random.uniform(0.1, 1, (N, 1))
+#     pop_p = np.random.uniform(1, 100, (N, 1))
+#
+#     for i in range(0, N):
+#         pop_weights[i][0] = np.round(pop_weights[i][0], 1)
+#         pop_p[i][0] = np.round(pop_p[i][0])
+#         item = [pop_weights[i][0], pop_p[i][0]]
+#         items.append(item)
+#     # print(items)
+#     return items
 
 
 def calcWeight(rep, items):

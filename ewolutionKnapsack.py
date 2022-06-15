@@ -1,4 +1,4 @@
-from generateData import generateItems, generatePopulation, calcValue
+from generateItemsCorelation import generateItems
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
