@@ -26,8 +26,8 @@ def select_function(population_list, number_of_best_solutions, items, population
         value_list.pop(n_indexes_list[i])
     return n_indexes_list
 
-def update_probability_vector(a, probability_vector, best_solutions_list, population_list, population_size):
-    update_vector = np.full(population_size, 0)
+def update_probability_vector(a, probability_vector, best_solutions_list, population_list, items_size):
+    update_vector = np.full(items_size, 0)
     for i in best_solutions_list:
         update_vector = population_list[i] + update_vector
     updated_probability_vector = (1 - a) * probability_vector + a * (1/len(best_solutions_list)) * update_vector
@@ -50,7 +50,7 @@ def find_optimal(numOfGen, number_of_solutions_to_select, items, population_size
     for _ in tqdm(range(numOfGen), desc="Evolution in progress..."):
         population = generate_population_based_on_probability(probability_vector, population_size)
         best_N_solutions = select_function(population, number_of_solutions_to_select, items, population_size, max_weight)
-        prob_vector = update_probability_vector(a_parameter, probability_vector, best_N_solutions, population, population_size)
+        prob_vector = update_probability_vector(a_parameter, probability_vector, best_N_solutions, population, items_size)
         mutate_population(mutation_parameter, mutation_deviation, population_size, prob_vector)
         current_best_index = select_function(population, 1, items, population_size, max_weight)[0]
         current_best_value = calcValue(population[current_best_index], items, max_weight)
@@ -66,6 +66,7 @@ if __name__ == "__main__":
     N = 32
     seed(10)
     np.random.seed(10)
+    items_size = N
     # items = generateItems(N, False)
     items = generateItems(N, True)
     print(items)
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     mutation_parameter = 0.05
     mutation_deviation = 0.15
     number_of_solutions_to_select = 2
-    numOfGen = 100
+    numOfGen = 1000
 
     init_probability = np.full(N, 0.5)
     bests = [[] for x in range(10)]
