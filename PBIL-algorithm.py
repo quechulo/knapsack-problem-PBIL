@@ -26,32 +26,34 @@ def select_function(population_list, number_of_best_solutions, items, population
         value_list.pop(n_indexes_list[i])
     return n_indexes_list
 
-def update_probability_vector(a, probability_vector, best_solutions_list, population_list, population_size):
-    update_vector = np.full(population_size, 0)
+def update_probability_vector(a, probability_vector, best_solutions_list, population_list, items_size):
+    update_vector = np.full(items_size, 0)
+
     for i in best_solutions_list:
         update_vector = population_list[i] + update_vector
     updated_probability_vector = (1 - a) * probability_vector + a * (1/len(best_solutions_list)) * update_vector
     return updated_probability_vector
 
-def mutate_population(mutation_probability, mutation_sigma, population_size, probability_vector):
+def mutate_population(mutation_probability, mutation_sigma, items_size, probability_vector):
     
 
     try_mutation = uniform(0,1)
     if(mutation_probability > try_mutation):
-        probability_vector = np.random.normal(0, mutation_sigma, population_size) + probability_vector
+        probability_vector = np.random.normal(0, mutation_sigma, items_size) + probability_vector
     return probability_vector
 
 
 
-def find_optimal(numOfGen, number_of_solutions_to_select, items, population_size, max_weight, a_parameter, probability_vector):
+def find_optimal(numOfGen, number_of_solutions_to_select, items, population_size, max_weight, a_parameter, probability_vector, items_size):
     absolute_best = 0
     best_population = np.zeros(population_size)
     bestForPlotting = []
+    print(items_size)
     for _ in tqdm(range(numOfGen), desc="Evolution in progress..."):
         population = generate_population_based_on_probability(probability_vector, population_size)
         best_N_solutions = select_function(population, number_of_solutions_to_select, items, population_size, max_weight)
-        prob_vector = update_probability_vector(a_parameter, probability_vector, best_N_solutions, population, population_size)
-        mutate_population(mutation_parameter, mutation_deviation, population_size, prob_vector)
+        prob_vector = update_probability_vector(a_parameter, probability_vector, best_N_solutions, population, items_size)
+        mutate_population(mutation_parameter, mutation_deviation, items_size, prob_vector)
         current_best_index = select_function(population, 1, items, population_size, max_weight)[0]
         current_best_value = calcValue(population[current_best_index], items, max_weight)
         
@@ -66,23 +68,25 @@ if __name__ == "__main__":
     N = 32
     seed(10)
     np.random.seed(10)
+    items_size = N
     # items = generateItems(N, False)
     items = generateItems(N, True)
     print(items)
-    population_size = N
+    population_size = N+32
     W_max = 60
     a_parameter = 0.2
     mutation_parameter = 0.05
     mutation_deviation = 0.15
     number_of_solutions_to_select = 2
-    numOfGen = 100
+    numOfGen = 1000
 
     init_probability = np.full(N, 0.5)
+    print(init_probability.shape)
     bests = [[] for x in range(10)]
     generations = [100, 1000, 10000]
     for gen in generations:
         for i in range(10):
-            best_population_found_by_pbil, best_solution_found_by_pbil, bestForPlotting = find_optimal(gen, number_of_solutions_to_select, items, population_size, W_max, a_parameter, init_probability)
+            best_population_found_by_pbil, best_solution_found_by_pbil, bestForPlotting = find_optimal(gen, number_of_solutions_to_select, items, population_size, W_max, a_parameter, init_probability, items_size)
             bests[i].append([best_solution_found_by_pbil])
             plt.plot(bestForPlotting, 'o', color='red')
             plt.xlabel('number of generations')
