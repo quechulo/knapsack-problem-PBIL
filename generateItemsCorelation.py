@@ -23,6 +23,9 @@ def generateItems(num_of_items=5, cor=False):
 
     m = np.random.multivariate_normal(means, covs, num_of_items).T
     scatter(m[0], m[1])
+    plt.title('generated items:')
+    plt.ylabel('weight')
+    plt.xlabel('value')
     plt.show() # print distribution of generated items
 
     df = pd.DataFrame(m)
