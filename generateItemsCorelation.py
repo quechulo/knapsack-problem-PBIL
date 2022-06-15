@@ -14,10 +14,10 @@ def generateItems(num_of_items=5, cor=False):
         corr = 0.01  # correlation
     else:
         corr = 0.9  # correlation
-    xx = np.array([0.0, 50.0])
+    xx = np.array([0.1, 50.0])
     yy = np.array([0.1, 1.0])
     means = [xx.mean(), yy.mean()]
-    stds = [xx.std(), yy.std()] # tutaj można podzielić obie przez 3 `/ 3`
+    stds = [xx.std() / 3, yy.std() / 3] # tutaj można podzielić obie przez 3 `/ 3` wtedy nie ma ujemnych
 
     covs = [[stds[0] ** 2, stds[0] * stds[1] * corr],
             [stds[0] * stds[1] * corr, stds[1] ** 2]]
