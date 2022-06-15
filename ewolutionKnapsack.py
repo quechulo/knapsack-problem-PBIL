@@ -1,30 +1,31 @@
+from generateData import *
+from generateItemsCorelation import generateItems
 
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import time
 
-N = 32
+global N
+N= 32
+W_max = 5.5
 bestForPlotting = []
 
 
 def adjustValues(population):
     for el in population:
-        el[0] = calcValue(el[1], items)
+        # print('adjusting value')
+        el[0] = calcValue(el[1], items, W_max)
     return population
 
 
 def doTournament(population, s):
-    # idxs = []
-    population = adjustValues(population)
     new_population = []
-    population.sort(reverse=True)
 
     for i in range(0, len(population)):
-        idxs = []
+        idxs = [i]
         while(len(idxs) != s):
             idx = np.random.randint(0, len(population))
-            # if idx not in idxs:
             idxs.append(idx)
 
         bestValue = 0
@@ -33,29 +34,31 @@ def doTournament(population, s):
             if population[id][0] >= bestValue:
                 bestValue = population[id][0]
                 winner = id
-        # for id in idxs:
-        #     population[id] = population[winner].copy()
         new_population.append(population[winner])
     # print(population)
     return new_population
+
 
 def binaryMutation(pop, p_bar, p_gen_type=.6):
     numOfItems = len(pop[0][1])
     pop.sort(reverse=True)
     # print(numOfItems)
-    for el in pop[20:]:
+    for el in pop:
         p = np.random.rand()
         if p >= p_bar:
-            # rep = np.zeros(numOfItems, dtype=int).tolist()
             for i in range(0, numOfItems):
                 pp = np.random.rand()
                 if pp >= p_gen_type:
                     # rep[i] = 1
                     el[1][i] = 1 ^ el[1][i]
-            # idx = np.random.randint(0, numOfItems)
-            # el[1][idx] = 1 ^ el[1][idx]
+
+            weight = calcWeight(el[1], items)
+            while weight > W_max:
+                el[1] = adjustRepValue(el[1], items)
+                weight = calcWeight(el[1], items)
     # print(pop)
     return pop
+
 
 def findBest(population):
     bestOne = 0
@@ -70,39 +73,38 @@ def findBest(population):
 
 def findOpt(population, numOfGen, tournamentSize, p_bar, p_gen_type):
     theBest = [0, np.zeros(len(population[0][1]), dtype=int).tolist()]
-    for _ in tqdm(range(numOfGen), desc="Loading..."):
-        population = doTournament(population, tournamentSize) #  for tournament
-        population = binaryMutation(population, p_bar, p_gen_type) #  for tournament
-        # population = doElitarySelect(population, tournamentSize, p_bar, p_gen_type) # for elitary select
+    for _ in tqdm(range(numOfGen), desc="Evolution in progress..."):
+        population = doTournament(population, tournamentSize)
+        population = binaryMutation(population, p_bar, p_gen_type)
         population = adjustValues(population)
         best = findBest(population)
-        bestForPlotting.append(best[0])
+        # bestForPlotting.append(best[0])
         if best[0] > theBest[0]:
             theBest = best.copy()
-            # bestForPlotting.append(theBest[0])
+            bestForPlotting.append(theBest[0])
             # print(theBest)
+        # print(best)
     return theBest
 
 if __name__ == "__main__":
     global items
-    items = generateItems(N)
+
+    # items = generateItems(N, False)
+    items = generateItems(N, True)
     print(items)
 
-    population_reps = 120
-    numOfGen = 10500
-    # tournamentSize = 30  # for elitary select
-    tournamentSize = 2  # for tournament select
+    population_reps = 250
+    numOfGen = 25000
+    tournamentSize = 3  # for tournament select
     p_bar = 0.7  # p-nstwo braku zdarzenia mutacji
-    p_gen_type = 0.8  # p-nstwo mniej zroznicowanego genotypu
+    p_gen_type = 0.95  # p-nstwo mniej zroznicowanego genotypu
 
-    W_max = np.round(np.sum(items, axis=0)[0] * 0.3, 1)  # max weight of knapsack
     print(W_max)
     population = generatePopulation(items, population_reps, W_max)
-    population = adjustValues(population)
+    # population = adjustValues(population)
     print('first population:')
     print(population)
 
-    #
     best = []
     best = findOpt(population, numOfGen, tournamentSize, p_bar, p_gen_type)
 
@@ -113,5 +115,5 @@ if __name__ == "__main__":
     print("best knapsack:", best[1])
 
 
-    plt.plot(bestForPlotting, 'o', color='black')
+    plt.plot(bestForPlotting, 'o', color='green')
     plt.show()

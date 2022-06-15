@@ -6,8 +6,7 @@ import random
 import numpy as np
 from matplotlib.pyplot import scatter
 
-
-random.seed(0)
+# random.seed(0)
 
 def generateItems(num_of_items=5, cor=False):
     if cor is False:
@@ -28,6 +27,8 @@ def generateItems(num_of_items=5, cor=False):
 
     df = pd.DataFrame(m)
     df = df.T[[1,0]] # swap order of columns to [weight; value]
+    df[0] = df[0].astype('int')
+    df[1] = df[1].round(2)
     df = df.values.tolist()
     return df
 
