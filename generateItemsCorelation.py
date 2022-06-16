@@ -16,7 +16,7 @@ def generateItems(num_of_items=5, cor=False):
     xx = np.array([1, 50])
     yy = np.array([2, 10])
     means = [xx.mean(), yy.mean()]
-    stds = [xx.std() / 3, yy.std() / 3] # tutaj można podzielić obie przez 3 `/ 3` wtedy nie ma ujemnych
+    stds = [xx.std() / 3, yy.std() / 3]
 
     covs = [[stds[0] ** 2, stds[0] * stds[1] * corr],
             [stds[0] * stds[1] * corr, stds[1] ** 2]]
@@ -37,6 +37,5 @@ def generateItems(num_of_items=5, cor=False):
 
 
 if __name__ == "__main__":
-    ### USAGE ###
     df = generateItems(100, True)
     print(df)

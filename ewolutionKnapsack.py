@@ -18,7 +18,6 @@ bestForPlotting = []
 
 def adjustValues(population):
     for el in population:
-        # print('adjusting value')
         el[0] = calcValue(el[1], items, W_max)
     return population
 
@@ -39,14 +38,14 @@ def doTournament(population, s):
                 bestValue = population[id][0]
                 winner = id
         new_population.append(population[winner])
-    # print(population)
+
     return new_population
 
 
 def binaryMutation(pop, p_bar, p_gen_type=.6):
     numOfItems = len(pop[0][1])
     pop.sort(reverse=True)
-    # print(numOfItems)
+
     for el in pop:
         p = np.random.rand()
         if p >= p_bar:
@@ -71,7 +70,7 @@ def findBest(population):
         if actual > bestOne:
             bestOne = actual
             bestKnapsack = el[1].copy()
-    # print(bestOne, bestKnapsack)
+
     return [bestOne, bestKnapsack]
 
 def findOpt(population, numOfGen, tournamentSize, p_bar, p_gen_type):
@@ -92,8 +91,7 @@ def findOpt(population, numOfGen, tournamentSize, p_bar, p_gen_type):
     plt.ylabel('max value at given generation')
     plt.title('Correlated items')
     plt.show()
-            # print(theBest)
-        # print(best)
+
     return theBest
 
 if __name__ == "__main__":
@@ -133,8 +131,7 @@ if __name__ == "__main__":
             plt.title('Correlated items')
             plt.show()
             bestForPlotting = []
-    # df = pd.DataFrame(bests)
-    # df.to_excel('binMut.xlsx')
+
     file = open('mutBin.csv', 'w+', newline='')
 
     # writing the data into the file

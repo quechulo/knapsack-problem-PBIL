@@ -12,8 +12,6 @@ def calcWeight(rep, items):
 def calcValue(rep, items, max_weight):
     value = 0
     weight = calcWeight(rep, items)
-    # if weight > W_max:
-    #     return 0
     while weight > max_weight:
         rep = adjustRepValue(rep, items)
         weight = calcWeight(rep, items)
@@ -43,7 +41,7 @@ def generatePopulation(items, pop_size, W_max):
 if __name__ == "__main__":
 
     items = generateItems(N, True)
-    W_max = 5.5  # max weight of knapsack
+    W_max = 60  # max weight of knapsack
     print(W_max)
     print(items)
     population = generatePopulation(items, 5, W_max)
